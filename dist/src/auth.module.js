@@ -31,6 +31,7 @@ exports.AuthModule = AuthModule = __decorate([
                 imports: [config_1.ConfigModule],
                 useFactory: (configService) => ({
                     type: 'postgres',
+                    url: config.get('DATABASE_URL'),
                     host: configService.get('DATABASE_HOST'),
                     port: configService.get('DATABASE_PORT'),
                     username: configService.get('DATABASE_USER'),
@@ -38,6 +39,7 @@ exports.AuthModule = AuthModule = __decorate([
                     database: configService.get('DATABASE_NAME'),
                     entities: [entity_1.User],
                     synchronize: configService.get('DATABASE_SYNCHRONIZE'),
+                    ssl: { rejectUnauthorized: false },
                 }),
                 inject: [config_1.ConfigService],
             }),

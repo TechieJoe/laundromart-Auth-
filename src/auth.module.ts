@@ -12,7 +12,9 @@ import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
-
+       
+     
+     //test
         // Configuration Module for environment variables
         ConfigModule.forRoot({
           isGlobal: true, // Makes ConfigService available globally
@@ -24,6 +26,7 @@ import { PassportModule } from '@nestjs/passport';
           imports: [ConfigModule],
           useFactory: (configService: ConfigService) => ({
             type: 'postgres',
+            url: config.get<string>('DATABASE_URL'),
             host: configService.get<string>('DATABASE_HOST'),
             port: configService.get<number>('DATABASE_PORT'),
             username: configService.get<string>('DATABASE_USER'),
@@ -31,11 +34,31 @@ import { PassportModule } from '@nestjs/passport';
             database: configService.get<string>('DATABASE_NAME'),
             entities: [User],
             synchronize: configService.get<boolean>('DATABASE_SYNCHRONIZE'), // Set to false in production
+            ssl: { rejectUnauthorized: false },
           }),
           inject: [ConfigService],
         }),
     
     TypeOrmModule.forFeature([User]),
+ 
+
+    /**
+     * live
+     ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
+        url: config.get<string>('DATABASE_URL'),
+        entities: [User],
+        synchronize: true, // disable in production
+        ssl: { rejectUnauthorized: false },
+      }),
+      inject: [ConfigService],
+    }),
+    TypeOrmModule.forFeature([User]),
+
+     */
 
     // Passport Module for authentication strategies
     PassportModule.register({ defaultStrategy: 'jwt' }),
