@@ -26,7 +26,7 @@ import { PassportModule } from '@nestjs/passport';
           imports: [ConfigModule],
           useFactory: (configService: ConfigService) => ({
             type: 'postgres',
-            url: config.get<string>('DATABASE_URL'),
+            url: configService.get<string>('DATABASE_URL'),
             host: configService.get<string>('DATABASE_HOST'),
             port: configService.get<number>('DATABASE_PORT'),
             username: configService.get<string>('DATABASE_USER'),
