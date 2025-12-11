@@ -31,7 +31,12 @@ exports.AuthModule = AuthModule = __decorate([
                 imports: [config_1.ConfigModule],
                 useFactory: (configService) => ({
                     type: 'postgres',
-                    url: configService.get('DATABASE_URL'),
+                    url: configService.get('POSTGRES_URL'),
+                    host: configService.get('POSTGRES_HOST'),
+                    port: configService.get('POSTGRES_PORT'),
+                    username: configService.get('POSTGRES_USER'),
+                    password: configService.get('POSTGRES_PASSWORD'),
+                    database: configService.get('POSTGRES_NAME'),
                     entities: [entity_1.User],
                     synchronize: configService.get('DATABASE_SYNCHRONIZE'),
                     ssl: { rejectUnauthorized: false },
