@@ -1,22 +1,21 @@
 import { NestFactory } from '@nestjs/core';
-import { Transport, MicroserviceOptions } from '@nestjs/microservices';
+import { Transport } from '@nestjs/microservices';
 import { AuthModule } from './auth.module';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AuthModule,
-    {
-      transport: Transport.TCP,
-      options: {
-        host: '127.0.0.1',
-        port: 4000,
-      },
+  const app = await NestFactory.create(AuthModule);
+
+  app.connectMicroservice({
+    transport: Transport.TCP,
+    options: {
+      host: 'shortline.proxy.rlwy.net',
+      port: 1010,
     },
-  );
-   
-  console.log(`📡 Connected to Auth Microservice via TCP (127.0.0.1:4000)`);
+  });
 
   await app.startAllMicroservices();
-  await app.listen();  
+  await app.listen(3000); // internal HTTP port (Railway ignores this)
 }
-bootstrap();   
+bootstrap();
+
+
