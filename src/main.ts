@@ -8,7 +8,7 @@ async function bootstrap() {
     {
       transport: Transport.TCP,
       options: {
-        host: '127.0.0.1',
+        host: '0.0.0.0',
         port: 4000,
       },
     },
@@ -16,7 +16,6 @@ async function bootstrap() {
    
   console.log(`📡 Connected to Auth Microservice via TCP (127.0.0.1:4000)`);
 
-  await app.startAllMicroservices();
   await app.listen();  
 }
 bootstrap();   
