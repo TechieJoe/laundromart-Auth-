@@ -13,7 +13,7 @@ async function bootstrap() {
       },
     },
   );
+
+  await app.listen(); // 🔥 THIS WAS MISSING
 }
 bootstrap();
-
-
