@@ -41,6 +41,7 @@ export class AuthController {
 
   @MessagePattern({ cmd: 'register_user' })
   async registerUser(data: RegisterDto) {
+    console.log('🔥 REGISTER HIT');
     return this.authService.register(data);
   }
 
