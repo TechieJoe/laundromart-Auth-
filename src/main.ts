@@ -14,6 +14,7 @@ async function bootstrap() {
     },
   );
 
+  app.enableShutdownHooks();
   await app.listen(); // 🔥 THIS WAS MISSING
 }
 bootstrap();

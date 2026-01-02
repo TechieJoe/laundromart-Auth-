@@ -21,16 +21,34 @@ import { LocalStrategy } from 'utils/local.strategy';
      * Database
      */
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        url: config.get<string>('POSTGRES_URL'),
-        entities: [User],
-        synchronize: false,
-        ssl: { rejectUnauthorized: false },
-      }),
-      inject: [ConfigService],
-    }),
+  imports: [ConfigModule],
+  inject: [ConfigService],
+  useFactory: (config: ConfigService) => ({
+    type: 'postgres',
+    url: config.get<string>('POSTGRES_URL'),
+
+    entities: [User],
+
+    synchronize: false,
+
+    /**
+     * 🚨 THIS IS THE IMPORTANT PART
+     */
+    ssl: true,
+    extra: {
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    },
+
+    /**
+     * Prevent Railway proxy resets
+     */
+    keepConnectionAlive: true,
+    connectTimeoutMS: 10000,
+  }),
+}),
+
 
     TypeOrmModule.forFeature([User]),
 
