@@ -26,7 +26,7 @@ import { LocalStrategy } from 'utils/local.strategy';
   useFactory: (configService: ConfigService) => ({
     type: 'postgres',
     url: configService.get<string>('POSTGRES_URL'),
-     host: configService.get<string>('POSTGRES_HOST'),
+    host: configService.get<string>('POSTGRES_HOST'),
     port: configService.get<number>('POSTGRES_PORT'),
     username: configService.get<string>('POSTGRES_USER'),
     password: configService.get<string>('POSTGRES_PASSWORD'),

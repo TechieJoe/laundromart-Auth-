@@ -9,6 +9,11 @@ import { AuthModule } from './auth.module';
 
 @Module({
   imports: [
+    // Configuration Module for environment variables
+    ConfigModule.forRoot({
+      isGlobal: true, // Makes ConfigService available globally
+      envFilePath: ['.env'], // Load .env file
+    }),
     // Your Auth Module (to be created for local and JWT strategies)
     AuthModule,
   ],
