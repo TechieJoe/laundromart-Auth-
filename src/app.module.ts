@@ -1,31 +1,35 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
+import { ConfigModule } from '@nestjs/config';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { User } from 'utils/entity';
+
 import { AuthModule } from './auth.module';
 
 @Module({
   imports: [
-    // Configuration Module for environment variables
+    /**
+     * ✅ MAKE ConfigService GLOBAL (THIS FIXES JwtStrategy ERROR)
+     */
     ConfigModule.forRoot({
-      isGlobal: true, // Makes ConfigService available globally
-      envFilePath: ['.env'], // Load .env file
+      isGlobal: true,
+      envFilePath: '.env',
     }),
-    // Your Auth Module (to be created for local and JWT strategies)
+
+    /**
+     * Auth module (JWT, Local strategy, DB)
+     */
     AuthModule,
   ],
 })
 export class AppModule {
-  // Optional: Configure microservice (TCP) client
+  /**
+   * Optional: TCP microservice config
+   */
   static configureMicroservice(): MicroserviceOptions {
     return {
       transport: Transport.TCP,
       options: {
-        host: 'localhost',
-        port: 4000, // Port for microservice communication
+        host: '0.0.0.0',
+        port: 4000,
       },
     };
   }

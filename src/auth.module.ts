@@ -13,48 +13,42 @@ import { LocalStrategy } from 'utils/local.strategy';
 @Module({
   imports: [
     /**
-     * ✅ MAKE ConfigService AVAILABLE HERE
+     * ✅ ConfigService is available because ConfigModule
+     * was made GLOBAL in AppModule
      */
     ConfigModule,
 
     /**
-     * Database
+     * ✅ Database connection
      */
     TypeOrmModule.forRootAsync({
-  imports: [ConfigModule],
-  inject: [ConfigService],
-  useFactory: (configService: ConfigService) => ({
-    type: 'postgres',
-    url: configService.get<string>('POSTGRES_URL'),
-    host: configService.get<string>('POSTGRES_HOST'),
-    port: configService.get<number>('POSTGRES_PORT'),
-    username: configService.get<string>('POSTGRES_USER'),
-    password: configService.get<string>('POSTGRES_PASSWORD'),
-    database: configService.get<string>('POSTGRES_NAME'),
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
 
+        /**
+         * ✅ USE ONLY ONE METHOD (URL is best for Railway)
+         */
+        url: config.get<string>('POSTGRES_URL'),
 
-    entities: [User],
+        entities: [User],
+        synchronize: false,
 
-    synchronize: false,
+        /**
+         * ✅ REQUIRED for Railway public proxy
+         */
+        ssl: {
+          rejectUnauthorized: false,
+        },
 
-    /**
-     * 🚨 THIS IS THE IMPORTANT PART
-     */
-    ssl: true,
-    extra: {
-      ssl: {
-        rejectUnauthorized: false,
-      },
-    },
-
-    /**
-     * Prevent Railway proxy resets
-     */
-    keepConnectionAlive: true,
-    connectTimeoutMS: 10000,
-  }),
-}),
-
+        /**
+         * ✅ Prevent connection resets
+         */
+        keepConnectionAlive: true,
+        connectTimeoutMS: 10000,
+      }),
+    }),
 
     TypeOrmModule.forFeature([User]),
 
@@ -65,13 +59,13 @@ import { LocalStrategy } from 'utils/local.strategy';
 
     JwtModule.registerAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET'),
         signOptions: {
           expiresIn: config.get<string>('JWT_EXPIRES_IN', '60m'),
         },
       }),
-      inject: [ConfigService],
     }),
   ],
 
