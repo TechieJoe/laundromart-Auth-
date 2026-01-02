@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
@@ -13,8 +13,12 @@ import { LocalStrategy } from 'utils/local.strategy';
 @Module({
   imports: [
     /**
-     * TypeORM — Railway PostgreSQL
-     * Uses ONLY the connection URL (correct)
+     * ✅ MAKE ConfigService AVAILABLE HERE
+     */
+    ConfigModule,
+
+    /**
+     * Database
      */
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -22,28 +26,19 @@ import { LocalStrategy } from 'utils/local.strategy';
         type: 'postgres',
         url: config.get<string>('POSTGRES_URL'),
         entities: [User],
-        synchronize: false, // 🚨 NEVER true in production
+        synchronize: false,
         ssl: { rejectUnauthorized: false },
       }),
       inject: [ConfigService],
     }),
 
-    /**
-     * Repositories
-     */
     TypeOrmModule.forFeature([User]),
 
-    /**
-     * Passport (JWT default strategy)
-     */
     PassportModule.register({
       defaultStrategy: 'jwt',
       session: false,
     }),
 
-    /**
-     * JWT
-     */
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
