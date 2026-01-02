@@ -21,6 +21,21 @@ import { PassportModule } from '@nestjs/passport';
           envFilePath: ['.env'], // Load .env file
         }),
     
+
+        TypeOrmModule.forRootAsync({
+          imports: [ConfigModule],
+          useFactory: (config: ConfigService) => ({
+          type: 'postgres',
+          url: config.get<string>('POSTGRES_URL'),
+          entities: [User],
+          synchronize: false,
+          ssl: { rejectUnauthorized: false },
+       }),
+     inject: [ConfigService],
+      }),
+        TypeOrmModule.forFeature([User]),
+        
+            /**
         // TypeORM Module for PostgreSQL
         TypeOrmModule.forRootAsync({
           imports: [ConfigModule],
@@ -40,7 +55,7 @@ import { PassportModule } from '@nestjs/passport';
         }),
     
     TypeOrmModule.forFeature([User]),
- 
+        */
 
     /**
      * live
