@@ -21,34 +21,39 @@ import { LocalStrategy } from 'utils/local.strategy';
     /**
      * ✅ Database connection
      */
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
+  TypeOrmModule.forRootAsync({
+  imports: [ConfigModule],
+  inject: [ConfigService],
+  useFactory: (config: ConfigService) => ({
+    type: 'postgres',
 
-        /**
-         * ✅ USE ONLY ONE METHOD (URL is best for Railway)
-         */
-        url: config.get<string>('POSTGRES_URL'),
+    /**
+     * ✅ USE ONLY THE URL (VERY IMPORTANT)
+     */
+    url: config.get<string>('POSTGRES_URL'),
 
-        entities: [User],
-        synchronize: false,
+    entities: [User],
 
-        /**
-         * ✅ REQUIRED for Railway public proxy
-         */
-        ssl: {
-          rejectUnauthorized: false,
-        },
+    synchronize: false, // NEVER true on Railway
 
-        /**
-         * ✅ Prevent connection resets
-         */
-        keepConnectionAlive: true,
-        connectTimeoutMS: 10000,
-      }),
-    }),
+    /**
+     * ✅ REQUIRED FOR RAILWAY
+     */
+    ssl: {
+      rejectUnauthorized: false,
+    },
+
+    /**
+     * ✅ PREVENT CONNECTION RESETS
+     */
+    extra: {
+      max: 5,                // small pool
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 10000,
+    },
+  }),
+}),
+
 
     TypeOrmModule.forFeature([User]),
 
