@@ -23,9 +23,15 @@ import { LocalStrategy } from 'utils/local.strategy';
     TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
   inject: [ConfigService],
-  useFactory: (config: ConfigService) => ({
+  useFactory: (configService: ConfigService) => ({
     type: 'postgres',
-    url: config.get<string>('POSTGRES_URL'),
+    url: configService.get<string>('POSTGRES_URL'),
+     host: configService.get<string>('POSTGRES_HOST'),
+    port: configService.get<number>('POSTGRES_PORT'),
+    username: configService.get<string>('POSTGRES_USER'),
+    password: configService.get<string>('POSTGRES_PASSWORD'),
+    database: configService.get<string>('POSTGRES_NAME'),
+
 
     entities: [User],
 
